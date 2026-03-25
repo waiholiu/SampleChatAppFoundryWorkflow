@@ -18,12 +18,6 @@ param agentName string = 'TestWorkflowForWeb'
 @description('Azure tenant ID for cross-tenant auth')
 param tenantId string
 
-@description('Name of the existing Cognitive Services account for role assignments')
-param cognitiveServicesAccountName string
-
-@description('Resource group of the existing Cognitive Services account')
-param cognitiveServicesResourceGroup string
-
 var tags = { 'azd-env-name': environmentName }
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 
@@ -45,13 +39,7 @@ module web 'web.bicep' = {
   }
 }
 
-module roles 'roleAssignments.bicep' = {
-  scope: resourceGroup(cognitiveServicesResourceGroup)
-  params: {
-    cognitiveServicesAccountName: cognitiveServicesAccountName
-    principalId: web.outputs.identityPrincipalId
-  }
-}
-
 output AZURE_LOCATION string = location
 output SERVICE_WEB_URI string = web.outputs.uri
+output WEB_APP_NAME string = web.outputs.name
+output WEB_IDENTITY_PRINCIPAL_ID string = web.outputs.identityPrincipalId
